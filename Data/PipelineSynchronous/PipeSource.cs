@@ -6,12 +6,8 @@ using System.Reflection;
 
 namespace Data.PipelineSynchronous
 {
-	public class PipeSource<TIn, TOut>
+	public class PipeSource<TIn, TOut> : PipeThatCanBeFollowed<TIn, TOut>
 	{
-		public delegate void Notify(PossibleResult<TOut> result);
-
-		private readonly Action<TIn> _impl;
-		private readonly List<IHandleResult<TOut>> _listeners = new List<IHandleResult<TOut>>();
 		private readonly NodeDisplay _nodeDisplay;
 
 		public PipeSource(Func<TIn, TOut> handler)
@@ -52,17 +48,6 @@ namespace Data.PipelineSynchronous
 			_nodeDisplay = new NodeDisplay(_Format(handler.Method));
 		}
 
-		private string _Format(MethodInfo handler)
-		{
-			return
-				$"{handler.ReturnType.Name} {handler.DeclaringType.Name}.{handler.Name}({_FormatParams(handler.GetParameters())})";
-		}
-
-		private string _FormatParams(IEnumerable<ParameterInfo> parameters)
-		{
-			return string.Join(", ", parameters.Select(p => $"{p.ParameterType.Name} {p.Name}"));
-		}
-
 		public override string ToString()
 		{
 			var output = new StringWriter();
@@ -73,38 +58,12 @@ namespace Data.PipelineSynchronous
 		private void _Describe(TextWriter output, int myLevel)
 		{
 			_nodeDisplay.WriteTo(output, myLevel);
-			foreach (var listener in _listeners)
-			{
-				listener.Describe(output, myLevel + 1);
-			}
+			DescribeChildren(output, myLevel);
 		}
-
-		private void _Err(Exception error)
-		{
-			ResultGenerated?.Invoke(PossibleResult<TOut>.Of(error));
-		}
-
-		private void _Notify(TOut result)
-		{
-			ResultGenerated?.Invoke(PossibleResult<TOut>.Of(result));
-		}
-
-		private void _Finish()
-		{
-			ResultGenerated?.Invoke(PossibleResult<TOut>.Done());
-		}
-
-		public event Notify ResultGenerated;
 
 		public void Call(TIn input)
 		{
 			_impl(input);
-		}
-
-		public void AddSegments(IHandleResult<TOut> downstream)
-		{
-			ResultGenerated += evt => evt.Handle(downstream);
-			_listeners.Add(downstream);
 		}
 	}
 }

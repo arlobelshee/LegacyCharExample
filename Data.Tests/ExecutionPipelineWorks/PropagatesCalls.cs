@@ -130,5 +130,20 @@ namespace Data.Tests.ExecutionPipelineWorks
 						.ExcludingMissingMembers());
 			}
 		}
+
+		[Test]
+		public void ShouldConnectThroughMultipleLayers()
+		{
+			var head = new PipeSource<decimal, decimal>(_AddThree);
+			var middle = head.AddSegments(_AddThree);
+			using (var monitor = middle.Monitor())
+			{
+				head.Call(4);
+				var expectation = new[] {Result(10), Done()};
+				monitor.OccurredEvents.Should()
+					.BeEquivalentTo(expectation, options => options.WithStrictOrdering()
+						.ExcludingMissingMembers());
+			}
+		}
 	}
 }
