@@ -46,7 +46,7 @@ namespace Data
 				.Select(CardViewModel.From));
 		}
 
-		private Action<CharacterFile, Action<CardData>> Scatter(Func<CharacterFile, List<CardData>> getAllItems)
+		private Action<TIn, Action<TOut>> Scatter<TIn, TOut>(Func<TIn, List<TOut>> getAllItems)
 		{
 			return (source, handleData) =>
 			{
