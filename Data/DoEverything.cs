@@ -23,7 +23,6 @@ namespace Data
 
 			var characterFile = characterTrap.Results[0];
 			var configFile = configTrap.Results[0];
-
 			var partialCards = partialCardsTrap.Results;
 
 			var localCards = configFile.ParseCards();
