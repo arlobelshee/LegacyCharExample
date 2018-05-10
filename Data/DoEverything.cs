@@ -55,11 +55,11 @@ namespace Data
 
 			partialCardsTrap = new Collector<CardData>();
 			var partialCardFinder =
-				orchestration.AndThen(PipelineAdapter.Scatter2<CharacterFile, CardData>(CharacterFile.GetTheCards));
+				orchestration.AndThen(PipelineAdapter.Scatter<CharacterFile, CardData>(CharacterFile.GetTheCards));
 			partialCardFinder.AndThen(partialCardsTrap);
 
 			localCardsTrap = new Collector<CardData>();
-			var localCardFinder = configFileNode.AndThen(PipelineAdapter.Scatter2<ConfigFile, CardData>(ConfigFile.GetTheCards));
+			var localCardFinder = configFileNode.AndThen(PipelineAdapter.Scatter<ConfigFile, CardData>(ConfigFile.GetTheCards));
 			localCardFinder.AndThen(localCardsTrap);
 			return orchestration;
 		}

@@ -6,23 +6,9 @@ namespace Data.PipelineSynchronous
 {
 	internal static class PipelineAdapter
 	{
-		public static Action<TIn, Action<TOut>> Scatter<TIn, TOut>(Func<TIn, List<TOut>> getAllItems)
-		{
-			return (source, handleData) =>
-			{
-				getAllItems(source)
-					.ForEach(handleData);
-			};
-		}
-
-		public static AdapterPipe<TIn, TOut> Scatter2<TIn, TOut>(Func<TIn, List<TOut>> getAllItems)
+		public static AdapterPipe<TIn, TOut> Scatter<TIn, TOut>(Func<TIn, List<TOut>> getAllItems)
 		{
 			return new ScatterImpl<TIn, TOut>(getAllItems);
-		}
-
-		public static PipeSource<TIn, TOut> ScatterAsPipeSource<TIn, TOut>(Func<TIn, List<TOut>> getTheCards)
-		{
-			return new PipeSource<TIn, TOut>(Scatter(getTheCards));
 		}
 
 		internal class ScatterImpl<TIn, TOut> : AdapterPipe<TIn, TOut>
