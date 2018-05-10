@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Data.Tests.ExecutionPipelineWorks
+namespace Data.PipelineSynchronous
 {
 	public interface IHandleResult<T>
 	{

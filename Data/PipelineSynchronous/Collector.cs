@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Data.Tests.ExecutionPipelineWorks
+namespace Data.PipelineSynchronous
 {
 	public class Collector<T> : IHandleResult<T>
 	{

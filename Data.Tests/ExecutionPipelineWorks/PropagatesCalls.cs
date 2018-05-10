@@ -1,4 +1,5 @@
 ﻿using System;
+using Data.PipelineSynchronous;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -60,9 +61,9 @@ namespace Data.Tests.ExecutionPipelineWorks
 		}
 
 		[Test]
-		public void GatheringResultsRethrowsExceptions()
+		public void GatheringMulticastResultsRethrowsExceptions()
 		{
-			var testSubject = new PipeSource<decimal, decimal>(_ThowException);
+			var testSubject = new PipeSource<decimal, decimal>(_ThowExceptionOnSecondCall);
 			var results = new Collector<decimal>();
 			testSubject.AddSegments(results);
 			testSubject.Call(4);
@@ -77,9 +78,9 @@ namespace Data.Tests.ExecutionPipelineWorks
 		}
 
 		[Test]
-		public void GatheringMulticastResultsRethrowsExceptions()
+		public void GatheringResultsRethrowsExceptions()
 		{
-			var testSubject = new PipeSource<decimal, decimal>(_ThowExceptionOnSecondCall);
+			var testSubject = new PipeSource<decimal, decimal>(_ThowException);
 			var results = new Collector<decimal>();
 			testSubject.AddSegments(results);
 			testSubject.Call(4);

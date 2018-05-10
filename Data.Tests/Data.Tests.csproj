@@ -41,11 +41,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CheckTheTestSystem.cs" />
-    <Compile Include="ExecutionPipelineWorks\Collector.cs" />
-    <Compile Include="ExecutionPipelineWorks\EventType.cs" />
-    <Compile Include="ExecutionPipelineWorks\IHandleResult.cs" />
-    <Compile Include="ExecutionPipelineWorks\PipeSource.cs" />
-    <Compile Include="ExecutionPipelineWorks\PossibleResult.cs" />
     <Compile Include="ExecutionPipelineWorks\PropagatesCalls.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

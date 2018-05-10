@@ -48,6 +48,11 @@
     <Compile Include="CompendiumService.cs" />
     <Compile Include="ConfigFile.cs" />
     <Compile Include="DoEverything.cs" />
+    <Compile Include="PipelineSynchronous\Collector.cs" />
+    <Compile Include="PipelineSynchronous\EventType.cs" />
+    <Compile Include="PipelineSynchronous\IHandleResult.cs" />
+    <Compile Include="PipelineSynchronous\PipeSource.cs" />
+    <Compile Include="PipelineSynchronous\PossibleResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

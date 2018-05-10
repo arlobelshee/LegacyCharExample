@@ -1,4 +1,4 @@
-namespace Data.Tests.ExecutionPipelineWorks
+namespace Data.PipelineSynchronous
 {
 	public enum EventType
 	{
