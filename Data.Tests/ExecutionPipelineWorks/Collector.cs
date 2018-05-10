@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Data.Tests.ExecutionPipelineWorks
 {
-	public class Collector<T> : PipeHead<T>, IHandleResult<T>
+	public class Collector<T> : IHandleResult<T>
 	{
 		private readonly List<T> _results = new List<T>();
 		private Exception _error;
