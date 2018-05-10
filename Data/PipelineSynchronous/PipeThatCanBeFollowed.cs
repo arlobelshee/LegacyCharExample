@@ -49,23 +49,23 @@ namespace Data.PipelineSynchronous
 			}
 		}
 
-		public void AddSegments(IHandleResult<TOut> downstream)
+		public void AndThen(IHandleResult<TOut> downstream)
 		{
 			ResultGenerated += evt => evt.Handle(downstream);
 			_listeners.Add(downstream);
 		}
 
-		public PipeMiddle<TOut, TNext> AddSegments<TNext>(Func<TOut, TNext> handler)
+		public PipeMiddle<TOut, TNext> AndThen<TNext>(Func<TOut, TNext> handler)
 		{
 			var downstream = new PipeMiddle<TOut, TNext>(handler);
-			AddSegments(downstream);
+			AndThen(downstream);
 			return downstream;
 		}
 
-		public PipeMiddle<TOut, TNext> AddSegments<TNext>(Action<TOut, Action<TNext>> handler)
+		public PipeMiddle<TOut, TNext> AndThen<TNext>(Action<TOut, Action<TNext>> handler)
 		{
 			var downstream = new PipeMiddle<TOut, TNext>(handler);
-			AddSegments(downstream);
+			AndThen(downstream);
 			return downstream;
 		}
 	}

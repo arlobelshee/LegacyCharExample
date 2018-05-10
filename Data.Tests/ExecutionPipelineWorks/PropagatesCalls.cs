@@ -54,7 +54,7 @@ namespace Data.Tests.ExecutionPipelineWorks
 		{
 			var testSubject = new PipeSource<decimal, decimal>(_AddThree);
 			var results = new Collector<decimal>();
-			testSubject.AddSegments(results);
+			testSubject.AndThen(results);
 			testSubject.Call(4);
 			results.Results.Should()
 				.BeEquivalentTo(7M);
@@ -65,7 +65,7 @@ namespace Data.Tests.ExecutionPipelineWorks
 		{
 			var testSubject = new PipeSource<decimal, decimal>(_ThowExceptionOnSecondCall);
 			var results = new Collector<decimal>();
-			testSubject.AddSegments(results);
+			testSubject.AndThen(results);
 			testSubject.Call(4);
 			results.Invoking(all =>
 				{
@@ -82,7 +82,7 @@ namespace Data.Tests.ExecutionPipelineWorks
 		{
 			var testSubject = new PipeSource<decimal, decimal>(_ThowException);
 			var results = new Collector<decimal>();
-			testSubject.AddSegments(results);
+			testSubject.AndThen(results);
 			testSubject.Call(4);
 			results.Invoking(all =>
 				{
@@ -135,7 +135,7 @@ namespace Data.Tests.ExecutionPipelineWorks
 		public void ShouldConnectThroughMultipleLayers()
 		{
 			var head = new PipeSource<decimal, decimal>(_AddThree);
-			var middle = head.AddSegments(_AddThree);
+			var middle = head.AndThen(_AddThree);
 			using (var monitor = middle.Monitor())
 			{
 				head.Call(4);

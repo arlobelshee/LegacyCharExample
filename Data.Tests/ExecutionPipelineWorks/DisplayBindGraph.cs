@@ -12,8 +12,8 @@ namespace Data.Tests.ExecutionPipelineWorks
 		public void ShouldDisplayBindGraph()
 		{
 			var testSubject = new PipeSource<decimal, int>(_One);
-			testSubject.AddSegments(_Two).AddSegments(new Collector<float>());
-			testSubject.AddSegments<string>(_Three);
+			testSubject.AndThen(_Two).AndThen(new Collector<float>());
+			testSubject.AndThen<string>(_Three);
 			Approvals.Verify(testSubject);
 		}
 
