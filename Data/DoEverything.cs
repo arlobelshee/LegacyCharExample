@@ -16,15 +16,7 @@ namespace Data
 			PipeMiddle<CharacterFile, ConfigFile> configFileNode;
 			Collector<CardData> partialCardsTrap;
 			Collector<CardData> localCardsTrap;
-			var orchestration = CreatePipeline(out characterTrap, out configTrap, out configFileNode);
-
-			partialCardsTrap = new Collector<CardData>();
-			var partialCardFinder = orchestration.AndThen(PipelineAdapter.Scatter<CharacterFile, CardData>(CharacterFile.GetTheCards));
-			partialCardFinder.AndThen(partialCardsTrap);
-
-			localCardsTrap = new Collector<CardData>();
-			var localCardFinder = configFileNode.AndThen(PipelineAdapter.Scatter<ConfigFile, CardData>(ConfigFile.GetTheCards));
-			localCardFinder.AndThen(localCardsTrap);
+			var orchestration = CreateMorePipe(out characterTrap, out configTrap, out configFileNode, out partialCardsTrap, out localCardsTrap);
 
 			orchestration.Call(fileName);
 
@@ -48,6 +40,22 @@ namespace Data
 			}
 			return new CharacterData(localCards.Concat(partialCards)
 				.Select(CardViewModel.From));
+		}
+
+		private static PipeSource<string, CharacterFile> CreateMorePipe(out Collector<CharacterFile> characterTrap, out Collector<ConfigFile> configTrap,
+			out PipeMiddle<CharacterFile, ConfigFile> configFileNode, out Collector<CardData> partialCardsTrap, out Collector<CardData> localCardsTrap)
+		{
+			var orchestration = CreatePipeline(out characterTrap, out configTrap, out configFileNode);
+
+			partialCardsTrap = new Collector<CardData>();
+			var partialCardFinder =
+				orchestration.AndThen(PipelineAdapter.Scatter<CharacterFile, CardData>(CharacterFile.GetTheCards));
+			partialCardFinder.AndThen(partialCardsTrap);
+
+			localCardsTrap = new Collector<CardData>();
+			var localCardFinder = configFileNode.AndThen(PipelineAdapter.Scatter<ConfigFile, CardData>(ConfigFile.GetTheCards));
+			localCardFinder.AndThen(localCardsTrap);
+			return orchestration;
 		}
 
 		public static PipeSource<string, CharacterFile> CreatePipeline(out Collector<CharacterFile> characterTrap,
