@@ -13,5 +13,10 @@ namespace Data.PipelineSynchronous
 					.ForEach(handleData);
 			};
 		}
+
+		public static PipeSource<TIn, TOut> ScatterAsPipeSource<TIn, TOut>(Func<TIn, List<TOut>> getTheCards)
+		{
+			return new PipeSource<TIn, TOut>(Scatter(getTheCards));
+		}
 	}
 }
