@@ -23,6 +23,7 @@ namespace Data
 
 			Func<CharacterFile, List<CardData>> getTheCards = c => c.ParseCards();
 			var scatter = PipelineAdapter.Scatter(getTheCards);
+			var partialCardFinder = new PipeSource<CharacterFile, CardData>(scatter);
 			var partialCardsTrap = new Collector<CardData>();
 			scatter(characterFile, partialCardsTrap.HandleData);
 			var partialCards = partialCardsTrap.Results;
