@@ -13,11 +13,16 @@ namespace Data
 		{
 			Collector<CharacterFile> characterTrap;
 			Collector<ConfigFile> configTrap;
-			var orchestration = CreatePipeline(out characterTrap, out configTrap);
+			PipeMiddle<CharacterFile, ConfigFile> configFileNode;
+			var orchestration = CreatePipeline(out characterTrap, out configTrap, out configFileNode);
 
 			var partialCardsTrap = new Collector<CardData>();
 			var partialCardFinder = orchestration.AndThen(PipelineAdapter.Scatter<CharacterFile, CardData>(CharacterFile.GetTheCards));
 			partialCardFinder.AndThen(partialCardsTrap);
+
+			var localCardsTrap = new Collector<CardData>();
+			var localCardFinder = configFileNode.AndThen(PipelineAdapter.Scatter<ConfigFile, CardData>(ConfigFile.GetTheCards));
+			localCardFinder.AndThen(localCardsTrap);
 
 			orchestration.Call(fileName);
 
@@ -44,15 +49,16 @@ namespace Data
 		}
 
 		public static PipeSource<string, CharacterFile> CreatePipeline(out Collector<CharacterFile> characterTrap,
-			out Collector<ConfigFile> configTrap)
+			out Collector<ConfigFile> configTrap, out PipeMiddle<CharacterFile, ConfigFile> configFileParse)
 		{
 			var orchestration = new PipeSource<string, CharacterFile>(CharacterFile.From);
 			characterTrap = new Collector<CharacterFile>();
 			orchestration.AndThen(characterTrap);
 
-			var configFileParse = orchestration.AndThen(ConfigFile.Matching);
+			configFileParse = orchestration.AndThen(ConfigFile.Matching);
 			configTrap = new Collector<ConfigFile>();
 			configFileParse.AndThen(configTrap);
+
 			return orchestration;
 		}
 

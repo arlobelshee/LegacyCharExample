@@ -12,9 +12,9 @@ namespace Data.Tests
 		{
 			Collector<CharacterFile> characterTrap;
 			Collector<ConfigFile> configTrap;
-			var orchestration = DoEverything.CreatePipeline(out characterTrap, out configTrap);
+			PipeMiddle<CharacterFile, ConfigFile> configFileNode;
+			var orchestration = DoEverything.CreatePipeline(out characterTrap, out configTrap, out configFileNode);
 			Approvals.Verify(orchestration);
 		}
-
 	}
 }
