@@ -13,7 +13,16 @@ namespace Data.Tests.ExecutionPipelineWorks
 		{
 			_impl = input =>
 			{
-				var result = handler(input);
+				TOut result;
+				try
+				{
+					result = handler(input);
+				}
+				catch (Exception err)
+				{
+					_Err(err);
+					return;
+				}
 				_Notify(result);
 				_Finish();
 			};
@@ -28,6 +37,11 @@ namespace Data.Tests.ExecutionPipelineWorks
 				_Finish();
 			};
 			_text = handler.ToString();
+		}
+
+		private void _Err(Exception error)
+		{
+			ResultGenerated?.Invoke(PossibleResult<TOut>.Of(error));
 		}
 
 		private void _Notify(TOut result)

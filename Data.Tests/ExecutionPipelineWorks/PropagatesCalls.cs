@@ -37,17 +37,9 @@ namespace Data.Tests.ExecutionPipelineWorks
 			return new {EventName = eventName, Parameters = args};
 		}
 
-		[Test]
-		public void ShouldAllowGeneratorFunctionsToPushSeveralArgumentsThenAutomaticallyFinishWhenTheyAreDone()
+		private decimal _ThowException(decimal arg)
 		{
-			var testSubject = new PipeSource<decimal, decimal>(_AddOneTwoThree);
-			using (var monitor = testSubject.Monitor())
-			{
-				testSubject.Call(4);
-				var expectation = new[] {Result(5), Result(6), Result(7), Done()};
-				monitor.OccurredEvents.Should().BeEquivalentTo(expectation,
-					options => options.WithStrictOrdering().ExcludingMissingMembers());
-			}
+			throw new ArgumentException("The right one.");
 		}
 
 		[Test]
@@ -57,7 +49,39 @@ namespace Data.Tests.ExecutionPipelineWorks
 			var results = new Collector<decimal>();
 			testSubject.AddSegments(results);
 			testSubject.Call(4);
-			results.Results.Should().BeEquivalentTo(7M);
+			results.Results.Should()
+				.BeEquivalentTo(7M);
+		}
+
+		[Test]
+		public void GatheringResultsRethrowsExceptions()
+		{
+			var testSubject = new PipeSource<decimal, decimal>(_ThowException);
+			var results = new Collector<decimal>();
+			testSubject.AddSegments(results);
+			testSubject.Call(4);
+			results.Invoking(all =>
+				{
+					var r = all.Results;
+				})
+				.Should()
+				.Throw<AggregateException>()
+				.WithInnerException<ArgumentException>()
+				.WithMessage("The right one.");
+		}
+
+		[Test]
+		public void ShouldAllowGeneratorFunctionsToPushSeveralArgumentsThenAutomaticallyFinishWhenTheyAreDone()
+		{
+			var testSubject = new PipeSource<decimal, decimal>(_AddOneTwoThree);
+			using (var monitor = testSubject.Monitor())
+			{
+				testSubject.Call(4);
+				var expectation = new[] {Result(5), Result(6), Result(7), Done()};
+				monitor.OccurredEvents.Should()
+					.BeEquivalentTo(expectation, options => options.WithStrictOrdering()
+						.ExcludingMissingMembers());
+			}
 		}
 
 		[Test]
@@ -65,7 +89,8 @@ namespace Data.Tests.ExecutionPipelineWorks
 		{
 			var testSubject = new PipeSource<decimal, decimal>(_AddThree);
 			testSubject.Call(4);
-			_lastInputSeen.Should().Be(4);
+			_lastInputSeen.Should()
+				.Be(4);
 		}
 
 		[Test]
@@ -76,8 +101,9 @@ namespace Data.Tests.ExecutionPipelineWorks
 			{
 				testSubject.Call(4);
 				var expectation = new[] {Result(7), Done()};
-				monitor.OccurredEvents.Should().BeEquivalentTo(expectation,
-					options => options.WithStrictOrdering().ExcludingMissingMembers());
+				monitor.OccurredEvents.Should()
+					.BeEquivalentTo(expectation, options => options.WithStrictOrdering()
+						.ExcludingMissingMembers());
 			}
 		}
 	}

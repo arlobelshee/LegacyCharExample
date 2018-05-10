@@ -22,8 +22,7 @@ namespace Data.Tests.ExecutionPipelineWorks
 					handler.HandleError(Error);
 					handler.HandleDone();
 					break;
-				default:
-					throw new ArgumentOutOfRangeException();
+				default: throw new ArgumentOutOfRangeException();
 			}
 		}
 
@@ -35,6 +34,11 @@ namespace Data.Tests.ExecutionPipelineWorks
 		public static PossibleResult<T> Done()
 		{
 			return new PossibleResult<T> {Type = EventType.Done};
+		}
+
+		public static PossibleResult<T> Of(Exception error)
+		{
+			return new PossibleResult<T> {Type = EventType.ErrorAndDone, Error = error};
 		}
 	}
 }
