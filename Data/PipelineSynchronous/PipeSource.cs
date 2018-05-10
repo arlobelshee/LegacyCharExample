@@ -11,8 +11,8 @@ namespace Data.PipelineSynchronous
 		public delegate void Notify(PossibleResult<TOut> result);
 
 		private readonly Action<TIn> _impl;
-		private readonly string _text;
 		private readonly List<IHandleResult<TOut>> _listeners = new List<IHandleResult<TOut>>();
+		private readonly NodeDisplay _nodeDisplay;
 
 		public PipeSource(Func<TIn, TOut> handler)
 		{
@@ -31,7 +31,7 @@ namespace Data.PipelineSynchronous
 				_Notify(result);
 				_Finish();
 			};
-			_text = _Format(handler.Method);
+			_nodeDisplay = new NodeDisplay(_Format(handler.Method));
 		}
 
 		public PipeSource(Action<TIn, Action<TOut>> handler)
@@ -49,7 +49,7 @@ namespace Data.PipelineSynchronous
 				}
 				_Finish();
 			};
-			_text = _Format(handler.Method);
+			_nodeDisplay = new NodeDisplay(_Format(handler.Method));
 		}
 
 		private string _Format(MethodInfo handler)
@@ -72,12 +72,7 @@ namespace Data.PipelineSynchronous
 
 		private void _Describe(TextWriter output, int myLevel)
 		{
-			for (var i = 0; i < myLevel; i++)
-			{
-				output.Write(" |");
-			}
-			output.Write("--> ");
-			output.WriteLine(_text);
+			_nodeDisplay.WriteTo(output, myLevel);
 			foreach (var listener in _listeners)
 			{
 				listener.Describe(output, myLevel + 1);

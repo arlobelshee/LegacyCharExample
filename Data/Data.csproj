@@ -51,6 +51,7 @@
     <Compile Include="PipelineSynchronous\Collector.cs" />
     <Compile Include="PipelineSynchronous\EventType.cs" />
     <Compile Include="PipelineSynchronous\IHandleResult.cs" />
+    <Compile Include="PipelineSynchronous\NodeDisplay.cs" />
     <Compile Include="PipelineSynchronous\PipeSource.cs" />
     <Compile Include="PipelineSynchronous\PossibleResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
