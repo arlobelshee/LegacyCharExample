@@ -15,8 +15,8 @@ namespace Data
 			Collector<ConfigFile> configTrap;
 			var orchestration = CreatePipeline(out characterTrap, out configTrap);
 
-			var partialCardFinder = PipelineAdapter.ScatterAsPipeSource<CharacterFile, CardData>(CharacterFile.GetTheCards);
 			var partialCardsTrap = new Collector<CardData>();
+			var partialCardFinder = orchestration.AndThen(PipelineAdapter.Scatter<CharacterFile, CardData>(CharacterFile.GetTheCards));
 			partialCardFinder.AndThen(partialCardsTrap);
 
 			orchestration.Call(fileName);
@@ -24,7 +24,6 @@ namespace Data
 			var characterFile = characterTrap.Results[0];
 			var configFile = configTrap.Results[0];
 
-			partialCardFinder.Call(characterFile);
 			var partialCards = partialCardsTrap.Results;
 
 			var localCards = configFile.ParseCards();
