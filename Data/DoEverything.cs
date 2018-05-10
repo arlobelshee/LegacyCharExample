@@ -14,13 +14,15 @@ namespace Data
 			Collector<CharacterFile> characterTrap;
 			Collector<ConfigFile> configTrap;
 			PipeMiddle<CharacterFile, ConfigFile> configFileNode;
+			Collector<CardData> partialCardsTrap;
+			Collector<CardData> localCardsTrap;
 			var orchestration = CreatePipeline(out characterTrap, out configTrap, out configFileNode);
 
-			var partialCardsTrap = new Collector<CardData>();
+			partialCardsTrap = new Collector<CardData>();
 			var partialCardFinder = orchestration.AndThen(PipelineAdapter.Scatter<CharacterFile, CardData>(CharacterFile.GetTheCards));
 			partialCardFinder.AndThen(partialCardsTrap);
 
-			var localCardsTrap = new Collector<CardData>();
+			localCardsTrap = new Collector<CardData>();
 			var localCardFinder = configFileNode.AndThen(PipelineAdapter.Scatter<ConfigFile, CardData>(ConfigFile.GetTheCards));
 			localCardFinder.AndThen(localCardsTrap);
 
