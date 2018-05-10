@@ -15,14 +15,15 @@ namespace Data
 			Collector<ConfigFile> configTrap;
 			var orchestration = CreatePipeline(out characterTrap, out configTrap);
 
+			var partialCardFinder = PipelineAdapter.ScatterAsPipeSource<CharacterFile, CardData>(CharacterFile.GetTheCards);
+			var partialCardsTrap = new Collector<CardData>();
+			partialCardFinder.AndThen(partialCardsTrap);
+
 			orchestration.Call(fileName);
 
 			var characterFile = characterTrap.Results[0];
 			var configFile = configTrap.Results[0];
 
-			var partialCardFinder = PipelineAdapter.ScatterAsPipeSource<CharacterFile, CardData>(CharacterFile.GetTheCards);
-			var partialCardsTrap = new Collector<CardData>();
-			partialCardFinder.AndThen(partialCardsTrap);
 			partialCardFinder.Call(characterFile);
 			var partialCards = partialCardsTrap.Results;
 
