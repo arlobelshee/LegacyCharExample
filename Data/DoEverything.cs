@@ -21,11 +21,10 @@ namespace Data
 			var characterFile = characterTrap.Results[0];
 			var configFile = configTrap.Results[0];
 
-			var partialCardsTrap = new Collector<CardData>();
-			Action<CardData> handleData = partialCardsTrap.HandleData;
 			Func<CharacterFile, List<CardData>> getTheCards = c => c.ParseCards();
 			var scatter = PipelineAdapter.Scatter(getTheCards);
-			scatter(characterFile, handleData);
+			var partialCardsTrap = new Collector<CardData>();
+			scatter(characterFile, partialCardsTrap.HandleData);
 			var partialCards = partialCardsTrap.Results;
 
 			var localCards = configFile.ParseCards();
