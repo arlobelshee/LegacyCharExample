@@ -25,7 +25,8 @@ namespace Data
 			var scatter = PipelineAdapter.Scatter(getTheCards);
 			var partialCardFinder = new PipeSource<CharacterFile, CardData>(scatter);
 			var partialCardsTrap = new Collector<CardData>();
-			scatter(characterFile, partialCardsTrap.HandleData);
+			partialCardFinder.AndThen(partialCardsTrap);
+			partialCardFinder.Call(characterFile);
 			var partialCards = partialCardsTrap.Results;
 
 			var localCards = configFile.ParseCards();
