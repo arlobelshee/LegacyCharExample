@@ -13,7 +13,9 @@ namespace Data.Tests
 			Collector<CharacterFile> characterTrap;
 			Collector<ConfigFile> configTrap;
 			PipeMiddle<CharacterFile, ConfigFile> configFileNode;
-			var orchestration = DoEverything.CreatePipeline(out characterTrap, out configTrap, out configFileNode);
+			Collector<CardData> partialCardsTrap;
+			Collector<CardData> localCardsTrap;
+			var orchestration = DoEverything.CreateMorePipe(out characterTrap, out configTrap, out configFileNode, out partialCardsTrap, out localCardsTrap);
 			Approvals.Verify(orchestration);
 		}
 	}
