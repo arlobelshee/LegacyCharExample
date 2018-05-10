@@ -21,5 +21,17 @@ namespace Data.Tests.ExecutionPipelineWorks
 			testSubject.Call(4);
 			_lastInputSeen.Should().Be(4);
 		}
+
+		[Test]
+		public void ShouldSendTheResultToAnyListeners()
+		{
+			var testSubject = new PipeSegment<decimal, decimal>(_AddThree);
+			using (var monitor = testSubject.Monitor())
+			{
+				testSubject.Call(4);
+				var expectation = new object[] {new {EventName = "ResultGenerated", Parameters = new object[] {7M}}};
+				monitor.OccurredEvents.Should().BeEquivalentTo(expectation, options => options.ExcludingMissingMembers());
+			}
+		}
 	}
 }
