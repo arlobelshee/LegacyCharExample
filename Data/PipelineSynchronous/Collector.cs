@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 namespace Data.PipelineSynchronous
 {
@@ -32,6 +33,15 @@ namespace Data.PipelineSynchronous
 
 		public void HandleDone()
 		{
+		}
+
+		public void Describe(TextWriter output, int myLevel)
+		{
+			for (var i = 0; i < myLevel; i++)
+			{
+				output.Write(" |");
+			}
+			output.Write("--> Collector");
 		}
 	}
 }

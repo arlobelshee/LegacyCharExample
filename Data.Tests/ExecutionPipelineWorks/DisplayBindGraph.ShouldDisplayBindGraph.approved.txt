@@ -1,1 +1,2 @@
-﻿Int32 DisplayBindGraph._One(Decimal arg)
+﻿--> Int32 DisplayBindGraph._One(Decimal arg)
+ |--> Collector

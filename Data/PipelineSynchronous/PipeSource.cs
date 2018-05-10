@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 
@@ -11,6 +12,7 @@ namespace Data.PipelineSynchronous
 
 		private readonly Action<TIn> _impl;
 		private readonly string _text;
+		private readonly List<IHandleResult<TOut>> _listeners = new List<IHandleResult<TOut>>();
 
 		public PipeSource(Func<TIn, TOut> handler)
 		{
@@ -63,7 +65,23 @@ namespace Data.PipelineSynchronous
 
 		public override string ToString()
 		{
-			return _text;
+			var output = new StringWriter();
+			_Describe(output, 0);
+			return output.ToString();
+		}
+
+		private void _Describe(TextWriter output, int myLevel)
+		{
+			for (var i = 0; i < myLevel; i++)
+			{
+				output.Write(" |");
+			}
+			output.Write("--> ");
+			output.WriteLine(_text);
+			foreach (var listener in _listeners)
+			{
+				listener.Describe(output, myLevel + 1);
+			}
 		}
 
 		private void _Err(Exception error)
@@ -91,6 +109,7 @@ namespace Data.PipelineSynchronous
 		public void AddSegments(IHandleResult<TOut> downstream)
 		{
 			ResultGenerated += evt => evt.Handle(downstream);
+			_listeners.Add(downstream);
 		}
 	}
 }
