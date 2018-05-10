@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CheckTheTestSystem.cs" />
+    <Compile Include="DoAllTheRightThings.cs" />
     <Compile Include="ExecutionPipelineWorks\DisplayBindGraph.cs" />
     <Compile Include="ExecutionPipelineWorks\PropagatesCalls.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

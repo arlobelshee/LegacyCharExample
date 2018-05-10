@@ -1,0 +1,4 @@
+﻿--> CharacterFile CharacterFile.From(String fileName)
+ |--> Collector
+ |--> ConfigFile ConfigFile.Matching(CharacterFile characterFile)
+ | |--> Collector
