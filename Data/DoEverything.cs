@@ -13,10 +13,16 @@ namespace Data
 			var orchestration = new PipeSource<string, CharacterFile>(CharacterFile.From);
 			var trap = new Collector<CharacterFile>();
 			orchestration.AndThen(trap);
-			orchestration.Call(fileName);
-			var characterFile = trap.Results[0];
 
-			var configFile = ConfigFile.Matching(characterFile);
+			var configFileParse = orchestration.AndThen(ConfigFile.Matching);
+			var configTrap = new Collector<ConfigFile>();
+			configFileParse.AndThen(configTrap);
+
+			orchestration.Call(fileName);
+
+			var characterFile = trap.Results[0];
+			var configFile = configTrap.Results[0];
+
 			var partialCards = characterFile.ParseCards();
 			var localCards = configFile.ParseCards();
 			var compendiumService = CompendiumService.Authenticate(username, password);
