@@ -20,5 +20,10 @@ namespace Data
 		{
 			throw new NotImplementedException();
 		}
+
+		public static List<CardData> GetTheCards(CharacterFile c)
+		{
+			return c.ParseCards();
+		}
 	}
 }

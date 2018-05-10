@@ -21,7 +21,7 @@ namespace Data
 			var characterFile = characterTrap.Results[0];
 			var configFile = configTrap.Results[0];
 
-			var scatter = PipelineAdapter.Scatter<CharacterFile, CardData>(GetTheCards);
+			var scatter = PipelineAdapter.Scatter<CharacterFile, CardData>(CharacterFile.GetTheCards);
 			var partialCardFinder = new PipeSource<CharacterFile, CardData>(scatter);
 			var partialCardsTrap = new Collector<CardData>();
 			partialCardFinder.AndThen(partialCardsTrap);
@@ -44,11 +44,6 @@ namespace Data
 			}
 			return new CharacterData(localCards.Concat(partialCards)
 				.Select(CardViewModel.From));
-		}
-
-		private List<CardData> GetTheCards(CharacterFile c)
-		{
-			return c.ParseCards();
 		}
 
 		public static PipeSource<string, CharacterFile> CreatePipeline(out Collector<CharacterFile> characterTrap,
