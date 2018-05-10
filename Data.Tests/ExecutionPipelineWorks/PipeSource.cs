@@ -2,14 +2,14 @@
 
 namespace Data.Tests.ExecutionPipelineWorks
 {
-	public class PipeSegment<TIn, TOut>
+	public class PipeSource<TIn, TOut>
 	{
 		public delegate void Notify(PossibleResult<TOut> result);
 
 		private readonly Action<TIn> _impl;
 		private string _text;
 
-		public PipeSegment(Func<TIn, TOut> handler)
+		public PipeSource(Func<TIn, TOut> handler)
 		{
 			_impl = input =>
 			{
@@ -20,7 +20,7 @@ namespace Data.Tests.ExecutionPipelineWorks
 			_text = handler.ToString();
 		}
 
-		public PipeSegment(Action<TIn, Action<TOut>> handler)
+		public PipeSource(Action<TIn, Action<TOut>> handler)
 		{
 			_impl = input =>
 			{
@@ -45,6 +45,11 @@ namespace Data.Tests.ExecutionPipelineWorks
 		public void Call(TIn input)
 		{
 			_impl(input);
+		}
+
+		public void AddSegments(IHandleResult<TOut> downstream)
+		{
+			ResultGenerated += evt => evt.Handle(downstream);
 		}
 	}
 }

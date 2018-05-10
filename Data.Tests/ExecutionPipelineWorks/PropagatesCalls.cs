@@ -40,7 +40,7 @@ namespace Data.Tests.ExecutionPipelineWorks
 		[Test]
 		public void ShouldAllowGeneratorFunctionsToPushSeveralArgumentsThenAutomaticallyFinishWhenTheyAreDone()
 		{
-			var testSubject = new PipeSegment<decimal, decimal>(_AddOneTwoThree);
+			var testSubject = new PipeSource<decimal, decimal>(_AddOneTwoThree);
 			using (var monitor = testSubject.Monitor())
 			{
 				testSubject.Call(4);
@@ -51,9 +51,19 @@ namespace Data.Tests.ExecutionPipelineWorks
 		}
 
 		[Test]
+		public void CanGatherResultsEasily()
+		{
+			var testSubject = new PipeSource<decimal, decimal>(_AddThree);
+			var results = new Collector<decimal>();
+			testSubject.AddSegments(results);
+			testSubject.Call(4);
+			results.Results.Should().BeEquivalentTo(7M);
+		}
+
+		[Test]
 		public void ShouldExecuteTheCodeForThisNode()
 		{
-			var testSubject = new PipeSegment<decimal, decimal>(_AddThree);
+			var testSubject = new PipeSource<decimal, decimal>(_AddThree);
 			testSubject.Call(4);
 			_lastInputSeen.Should().Be(4);
 		}
@@ -61,7 +71,7 @@ namespace Data.Tests.ExecutionPipelineWorks
 		[Test]
 		public void ShouldSendTheResultToAnyListeners()
 		{
-			var testSubject = new PipeSegment<decimal, decimal>(_AddThree);
+			var testSubject = new PipeSource<decimal, decimal>(_AddThree);
 			using (var monitor = testSubject.Monitor())
 			{
 				testSubject.Call(4);
