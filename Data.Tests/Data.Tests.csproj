@@ -41,7 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CheckTheTestSystem.cs" />
+    <Compile Include="ExecutionPipelineWorks\EventType.cs" />
     <Compile Include="ExecutionPipelineWorks\PipeSegment.cs" />
+    <Compile Include="ExecutionPipelineWorks\PossibleResult.cs" />
     <Compile Include="ExecutionPipelineWorks\PropagatesCalls.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

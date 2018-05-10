@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace Data.Tests.ExecutionPipelineWorks
@@ -12,6 +13,41 @@ namespace Data.Tests.ExecutionPipelineWorks
 		{
 			_lastInputSeen = input;
 			return input + 3;
+		}
+
+		private void _AddOneTwoThree(decimal input, Action<decimal> generateOneResult)
+		{
+			generateOneResult(input + 1);
+			generateOneResult(input + 2);
+			generateOneResult(input + 3);
+		}
+
+		private static object Done()
+		{
+			return Evt("ResultGenerated", PossibleResult<decimal>.Done());
+		}
+
+		private static object Result(decimal value)
+		{
+			return Evt("ResultGenerated", PossibleResult<decimal>.Of(value));
+		}
+
+		private static object Evt(string eventName, params object[] args)
+		{
+			return new {EventName = eventName, Parameters = args};
+		}
+
+		[Test]
+		public void ShouldAllowGeneratorFunctionsToPushSeveralArgumentsThenAutomaticallyFinishWhenTheyAreDone()
+		{
+			var testSubject = new PipeSegment<decimal, decimal>(_AddOneTwoThree);
+			using (var monitor = testSubject.Monitor())
+			{
+				testSubject.Call(4);
+				var expectation = new[] {Result(5), Result(6), Result(7), Done()};
+				monitor.OccurredEvents.Should().BeEquivalentTo(expectation,
+					options => options.WithStrictOrdering().ExcludingMissingMembers());
+			}
 		}
 
 		[Test]
@@ -29,14 +65,10 @@ namespace Data.Tests.ExecutionPipelineWorks
 			using (var monitor = testSubject.Monitor())
 			{
 				testSubject.Call(4);
-				var expectation = new[] {Evt("ResultGenerated", 7M), Evt("DoneForThisPass")};
-				monitor.OccurredEvents.Should().BeEquivalentTo(expectation, options => options.WithStrictOrdering().ExcludingMissingMembers());
+				var expectation = new[] {Result(7), Done()};
+				monitor.OccurredEvents.Should().BeEquivalentTo(expectation,
+					options => options.WithStrictOrdering().ExcludingMissingMembers());
 			}
-		}
-
-		private static object Evt(string eventName, params object[] args)
-		{
-			return new {EventName = eventName, Parameters = args};
 		}
 	}
 }

@@ -4,9 +4,7 @@ namespace Data.Tests.ExecutionPipelineWorks
 {
 	public class PipeSegment<TIn, TOut>
 	{
-		public delegate void Done();
-
-		public delegate void Notify(TOut result);
+		public delegate void Notify(PossibleResult<TOut> result);
 
 		private readonly Action<TIn> _impl;
 		private string _text;
@@ -22,18 +20,27 @@ namespace Data.Tests.ExecutionPipelineWorks
 			_text = handler.ToString();
 		}
 
-		private void _Finish()
+		public PipeSegment(Action<TIn, Action<TOut>> handler)
 		{
-			DoneForThisPass?.Invoke();
+			_impl = input =>
+			{
+				handler(input, _Notify);
+				_Finish();
+			};
+			_text = handler.ToString();
 		}
 
 		private void _Notify(TOut result)
 		{
-			ResultGenerated?.Invoke(result);
+			ResultGenerated?.Invoke(PossibleResult<TOut>.Of(result));
+		}
+
+		private void _Finish()
+		{
+			ResultGenerated?.Invoke(PossibleResult<TOut>.Done());
 		}
 
 		public event Notify ResultGenerated;
-		public event Done DoneForThisPass;
 
 		public void Call(TIn input)
 		{
