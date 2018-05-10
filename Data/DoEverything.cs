@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Data.PipelineSynchronous;
 using JetBrains.Annotations;
@@ -21,7 +22,10 @@ namespace Data
 			var configFile = configTrap.Results[0];
 
 			var partialCardsTrap = new Collector<CardData>();
-			characterFile.ParseCards().ForEach(partialCardsTrap.HandleData);
+			Action<CardData> handleData = partialCardsTrap.HandleData;
+			Func<CharacterFile, List<CardData>> getTheCards = c => c.ParseCards();
+			getTheCards(characterFile)
+				.ForEach(handleData);
 			var partialCards = partialCardsTrap.Results;
 
 			var localCards = configFile.ParseCards();
