@@ -45,7 +45,13 @@ namespace Data
 		public static PipeSource<string, CharacterFile> CreateMorePipe(out Collector<CharacterFile> characterTrap, out Collector<ConfigFile> configTrap,
 			out PipeMiddle<CharacterFile, ConfigFile> configFileNode, out Collector<CardData> partialCardsTrap, out Collector<CardData> localCardsTrap)
 		{
-			var orchestration = CreatePipeline(out characterTrap, out configTrap, out configFileNode);
+			var orchestration = new PipeSource<string, CharacterFile>(CharacterFile.From);
+			characterTrap = new Collector<CharacterFile>();
+			orchestration.AndThen(characterTrap);
+
+			configFileNode = orchestration.AndThen(ConfigFile.Matching);
+			configTrap = new Collector<ConfigFile>();
+			configFileNode.AndThen(configTrap);
 
 			partialCardsTrap = new Collector<CardData>();
 			var partialCardFinder =
@@ -55,20 +61,6 @@ namespace Data
 			localCardsTrap = new Collector<CardData>();
 			var localCardFinder = configFileNode.AndThen(PipelineAdapter.Scatter<ConfigFile, CardData>(ConfigFile.GetTheCards));
 			localCardFinder.AndThen(localCardsTrap);
-			return orchestration;
-		}
-
-		public static PipeSource<string, CharacterFile> CreatePipeline(out Collector<CharacterFile> characterTrap,
-			out Collector<ConfigFile> configTrap, out PipeMiddle<CharacterFile, ConfigFile> configFileParse)
-		{
-			var orchestration = new PipeSource<string, CharacterFile>(CharacterFile.From);
-			characterTrap = new Collector<CharacterFile>();
-			orchestration.AndThen(characterTrap);
-
-			configFileParse = orchestration.AndThen(ConfigFile.Matching);
-			configTrap = new Collector<ConfigFile>();
-			configFileParse.AndThen(configTrap);
-
 			return orchestration;
 		}
 
