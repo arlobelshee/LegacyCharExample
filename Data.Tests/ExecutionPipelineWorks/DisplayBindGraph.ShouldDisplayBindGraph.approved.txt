@@ -1,4 +1,4 @@
 ﻿--> Int32 DisplayBindGraph._One(Decimal arg)
  |--> Single DisplayBindGraph._Two(Int32 arg)
  | |--> Collector
- |--> Void DisplayBindGraph._Three(Int32 arg, Action`1 generateOne)
+ |--> Void DisplayBindGraph._Three(Int32 arg, Action`1[String] generateOne)

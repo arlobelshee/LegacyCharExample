@@ -48,6 +48,7 @@
     <Compile Include="CompendiumService.cs" />
     <Compile Include="ConfigFile.cs" />
     <Compile Include="DoEverything.cs" />
+    <Compile Include="PipelineSynchronous\AdapterPipe.cs" />
     <Compile Include="PipelineSynchronous\PipelineAdapter.cs" />
     <Compile Include="PipelineSynchronous\Collector.cs" />
     <Compile Include="PipelineSynchronous\EventType.cs" />
