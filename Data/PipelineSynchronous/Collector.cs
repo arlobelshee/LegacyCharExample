@@ -37,11 +37,7 @@ namespace Data.PipelineSynchronous
 
 		public void Describe(TextWriter output, int myLevel)
 		{
-			for (var i = 0; i < myLevel; i++)
-			{
-				output.Write(" |");
-			}
-			output.Write("--> Collector");
+			new NodeDisplay("Collector").WriteTo(output, myLevel);
 		}
 	}
 }
