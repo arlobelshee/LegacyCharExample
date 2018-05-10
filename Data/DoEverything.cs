@@ -20,7 +20,10 @@ namespace Data
 			var characterFile = characterTrap.Results[0];
 			var configFile = configTrap.Results[0];
 
-			var partialCards = characterFile.ParseCards();
+			var partialCardsTrap = new Collector<CardData>();
+			characterFile.ParseCards().ForEach(partialCardsTrap.HandleData);
+			var partialCards = partialCardsTrap.Results;
+
 			var localCards = configFile.ParseCards();
 			var compendiumService = CompendiumService.Authenticate(username, password);
 			var cardService = CardService.Authenticate(username, password);
