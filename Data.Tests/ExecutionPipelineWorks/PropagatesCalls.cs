@@ -1,9 +1,25 @@
-﻿using NUnit.Framework;
+﻿using FluentAssertions;
+using NUnit.Framework;
 
 namespace Data.Tests.ExecutionPipelineWorks
 {
 	[TestFixture]
 	public class PropagatesCalls
 	{
+		private decimal _lastInputSeen;
+
+		private decimal _AddThree(decimal input)
+		{
+			_lastInputSeen = input;
+			return input + 3;
+		}
+
+		[Test]
+		public void ShouldExecuteTheCodeForThisNode()
+		{
+			var testSubject = new PipeSegment<decimal, decimal>(_AddThree);
+			testSubject.Call(4);
+			_lastInputSeen.Should().Be(4);
+		}
 	}
 }
