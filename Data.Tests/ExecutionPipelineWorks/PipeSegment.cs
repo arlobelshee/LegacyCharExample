@@ -4,9 +4,11 @@ namespace Data.Tests.ExecutionPipelineWorks
 {
 	public class PipeSegment<TIn, TOut>
 	{
+		public delegate void Done();
+
 		public delegate void Notify(TOut result);
 
-		private Action<TIn> _impl;
+		private readonly Action<TIn> _impl;
 		private string _text;
 
 		public PipeSegment(Func<TIn, TOut> handler)
@@ -15,8 +17,14 @@ namespace Data.Tests.ExecutionPipelineWorks
 			{
 				var result = handler(input);
 				_Notify(result);
+				_Finish();
 			};
 			_text = handler.ToString();
+		}
+
+		private void _Finish()
+		{
+			DoneForThisPass?.Invoke();
 		}
 
 		private void _Notify(TOut result)
@@ -25,6 +33,7 @@ namespace Data.Tests.ExecutionPipelineWorks
 		}
 
 		public event Notify ResultGenerated;
+		public event Done DoneForThisPass;
 
 		public void Call(TIn input)
 		{

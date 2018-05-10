@@ -29,9 +29,14 @@ namespace Data.Tests.ExecutionPipelineWorks
 			using (var monitor = testSubject.Monitor())
 			{
 				testSubject.Call(4);
-				var expectation = new object[] {new {EventName = "ResultGenerated", Parameters = new object[] {7M}}};
-				monitor.OccurredEvents.Should().BeEquivalentTo(expectation, options => options.ExcludingMissingMembers());
+				var expectation = new[] {Evt("ResultGenerated", 7M), Evt("DoneForThisPass")};
+				monitor.OccurredEvents.Should().BeEquivalentTo(expectation, options => options.WithStrictOrdering().ExcludingMissingMembers());
 			}
+		}
+
+		private static object Evt(string eventName, params object[] args)
+		{
+			return new {EventName = eventName, Parameters = args};
 		}
 	}
 }
