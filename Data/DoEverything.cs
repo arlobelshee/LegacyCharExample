@@ -16,7 +16,7 @@ namespace Data
 			PipeMiddle<CharacterFile, ConfigFile> configFileNode;
 			Collector<CardData> partialCardsTrap;
 			Collector<CardData> localCardsTrap;
-			var orchestration = CreateMorePipe(out characterTrap, out configTrap, out configFileNode, out partialCardsTrap, out localCardsTrap);
+			var orchestration = CreatePipeline(out characterTrap, out configTrap, out configFileNode, out partialCardsTrap, out localCardsTrap);
 
 			orchestration.Call(fileName);
 
@@ -42,7 +42,7 @@ namespace Data
 				.Select(CardViewModel.From));
 		}
 
-		public static PipeSource<string, CharacterFile> CreateMorePipe(out Collector<CharacterFile> characterTrap, out Collector<ConfigFile> configTrap,
+		public static PipeSource<string, CharacterFile> CreatePipeline(out Collector<CharacterFile> characterTrap, out Collector<ConfigFile> configTrap,
 			out PipeMiddle<CharacterFile, ConfigFile> configFileNode, out Collector<CardData> partialCardsTrap, out Collector<CardData> localCardsTrap)
 		{
 			var orchestration = new PipeSource<string, CharacterFile>(CharacterFile.From);
