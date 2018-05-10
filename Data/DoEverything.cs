@@ -24,8 +24,8 @@ namespace Data
 			var partialCardsTrap = new Collector<CardData>();
 			Action<CardData> handleData = partialCardsTrap.HandleData;
 			Func<CharacterFile, List<CardData>> getTheCards = c => c.ParseCards();
-			getTheCards(characterFile)
-				.ForEach(handleData);
+			var scatter = Scatter(getTheCards);
+			scatter(characterFile, handleData);
 			var partialCards = partialCardsTrap.Results;
 
 			var localCards = configFile.ParseCards();
@@ -44,6 +44,15 @@ namespace Data
 			}
 			return new CharacterData(localCards.Concat(partialCards)
 				.Select(CardViewModel.From));
+		}
+
+		private Action<CharacterFile, Action<CardData>> Scatter(Func<CharacterFile, List<CardData>> getAllItems)
+		{
+			return (source, handleData) =>
+			{
+				getAllItems(source)
+					.ForEach(handleData);
+			};
 		}
 
 		public static PipeSource<string, CharacterFile> CreatePipeline(out Collector<CharacterFile> characterTrap,
