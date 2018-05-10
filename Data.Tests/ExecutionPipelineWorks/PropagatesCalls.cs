@@ -42,6 +42,12 @@ namespace Data.Tests.ExecutionPipelineWorks
 			throw new ArgumentException("The right one.");
 		}
 
+		private void _ThowExceptionOnSecondCall(decimal input, Action<decimal> generateOneResult)
+		{
+			generateOneResult(input + 1);
+			throw new ArgumentException("The right one.");
+		}
+
 		[Test]
 		public void CanGatherResultsEasily()
 		{
@@ -57,6 +63,23 @@ namespace Data.Tests.ExecutionPipelineWorks
 		public void GatheringResultsRethrowsExceptions()
 		{
 			var testSubject = new PipeSource<decimal, decimal>(_ThowException);
+			var results = new Collector<decimal>();
+			testSubject.AddSegments(results);
+			testSubject.Call(4);
+			results.Invoking(all =>
+				{
+					var r = all.Results;
+				})
+				.Should()
+				.Throw<AggregateException>()
+				.WithInnerException<ArgumentException>()
+				.WithMessage("The right one.");
+		}
+
+		[Test]
+		public void GatheringMulticastResultsRethrowsExceptions()
+		{
+			var testSubject = new PipeSource<decimal, decimal>(_ThowExceptionOnSecondCall);
 			var results = new Collector<decimal>();
 			testSubject.AddSegments(results);
 			testSubject.Call(4);

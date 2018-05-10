@@ -33,7 +33,15 @@ namespace Data.Tests.ExecutionPipelineWorks
 		{
 			_impl = input =>
 			{
-				handler(input, _Notify);
+				try
+				{
+					handler(input, _Notify);
+				}
+				catch (Exception err)
+				{
+					_Err(err);
+					return;
+				}
 				_Finish();
 			};
 			_text = handler.ToString();
