@@ -11,6 +11,9 @@ namespace Data
 		public CharacterData MakeAllTheViewModels([NotNull] string fileName, [NotNull] string username,
 			[NotNull] string password)
 		{
+			var compendiumService = CompendiumService.Authenticate(username, password);
+			var cardService = CardService.Authenticate(username, password);
+
 			Collector<CharacterFile> characterTrap;
 			Collector<ConfigFile> configTrap;
 			PipeMiddle<CharacterFile, ConfigFile> configFileNode;
@@ -25,8 +28,6 @@ namespace Data
 			var partialCards = partialCardsTrap.Results;
 			var localCards = localCardsTrap.Results;
 
-			var compendiumService = CompendiumService.Authenticate(username, password);
-			var cardService = CardService.Authenticate(username, password);
 			foreach (var card in partialCards)
 			{
 				cardService.FetchDetailsInto(card);
