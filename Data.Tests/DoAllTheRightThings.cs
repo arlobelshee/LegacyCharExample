@@ -12,9 +12,11 @@ namespace Data.Tests
 		{
 			Collector<CharacterFile> characterTrap;
 			Collector<ConfigFile> configTrap;
-			var orchestration = DoEverything.CreatePipeline(out characterTrap, out configTrap);
+			PipeMiddle<CharacterFile, ConfigFile> configFileNode;
+			Collector<CardData> partialCardsTrap;
+			Collector<CardData> localCardsTrap;
+			var orchestration = DoEverything.CreateMorePipe(out characterTrap, out configTrap, out configFileNode, out partialCardsTrap, out localCardsTrap);
 			Approvals.Verify(orchestration);
 		}
-
 	}
 }
