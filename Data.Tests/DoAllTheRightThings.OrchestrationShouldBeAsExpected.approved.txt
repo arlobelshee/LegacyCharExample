@@ -2,7 +2,7 @@
  |--> Collector
  |--> ConfigFile ConfigFile.Matching(CharacterFile characterFile)
  | |--> Collector
- | |--> Void <>c__DisplayClass0_0`2.<Scatter>b__0(ConfigFile source, Action`1 handleData)
+ | |--> Scatter(List`1[CardData] ConfigFile.GetTheCards(ConfigFile c))
  | | |--> Collector
- |--> Void <>c__DisplayClass0_0`2.<Scatter>b__0(CharacterFile source, Action`1 handleData)
+ |--> Scatter(List`1[CardData] CharacterFile.GetTheCards(CharacterFile c))
  | |--> Collector
