@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CheckEverything.cs" />
     <Compile Include="CheckTheTestSystem.cs" />
     <Compile Include="ExecutionPipelineWorks\DisplayBindGraph.cs" />
     <Compile Include="ExecutionPipelineWorks\PropagatesCalls.cs" />
