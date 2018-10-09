@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Data.PipelineSynchronous;
 using JetBrains.Annotations;
 
 namespace Data
@@ -9,8 +10,11 @@ namespace Data
 		public CharacterData MakeAllTheViewModels([NotNull] string fileName, [NotNull] string username,
 			[NotNull] string password)
 		{
-			var pipeline = new PipelineSynchronous.PipeSource<string, CharacterFile>((f)=> CharacterFile.From(f));
-			var characterFile = CharacterFile.From(fileName);
+			var pipeline = new PipeSource<string, CharacterFile>((f) => CharacterFile.From(f));
+			var collector = new Collector<CharacterFile>();
+			pipeline.AndThen(collector);
+			pipeline.Call(fileName);
+			var characterFile = collector.Results.First();
 			var configFile = ConfigFile.Matching(characterFile);
 			var partialCards = characterFile.ParseCards();
 			var localCards = configFile.ParseCards();
