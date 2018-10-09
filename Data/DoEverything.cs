@@ -9,6 +9,7 @@ namespace Data
 		public CharacterData MakeAllTheViewModels([NotNull] string fileName, [NotNull] string username,
 			[NotNull] string password)
 		{
+			var pipeline = new PipelineSynchronous.PipeSource<string, CharacterFile>((f)=> CharacterFile.From(f));
 			var characterFile = CharacterFile.From(fileName);
 			var configFile = ConfigFile.Matching(characterFile);
 			var partialCards = characterFile.ParseCards();
