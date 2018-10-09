@@ -10,12 +10,15 @@ namespace Data
 		public CharacterData MakeAllTheViewModels([NotNull] string fileName, [NotNull] string username,
 			[NotNull] string password)
 		{
-			var pipeline = new PipeSource<string, CharacterFile>((f) => CharacterFile.From(f));
-			var collector = new Collector<CharacterFile>();
-			pipeline.AndThen(collector);
-			pipeline.Call(fileName);
-			var characterFile = collector.Results.First();
-			var configFile = ConfigFile.Matching(characterFile);
+			var characterPipe = new PipeSource<string, CharacterFile>(CharacterFile.From);
+			var configCollector = new Collector<ConfigFile>();
+			var characterCollector = new Collector<CharacterFile>();
+			var configPipe = characterPipe.AndThen(ConfigFile.Matching);
+			characterPipe.AndThen(characterCollector);
+			configPipe.AndThen(configCollector);
+			characterPipe.Call(fileName);
+			var characterFile = characterCollector.Results.First();
+			var configFile = configCollector.Results.First();
 			var partialCards = characterFile.ParseCards();
 			var localCards = configFile.ParseCards();
 			var compendiumService = CompendiumService.Authenticate(username, password);
