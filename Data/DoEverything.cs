@@ -10,12 +10,7 @@ namespace Data
 		public CharacterData MakeAllTheViewModels([NotNull] string fileName, [NotNull] string username,
 			[NotNull] string password)
 		{
-			var characterPipe = new PipeSource<string, CharacterFile>(CharacterFile.From);
-			var configCollector = new Collector<ConfigFile>();
-			var characterCollector = new Collector<CharacterFile>();
-			var configPipe = characterPipe.AndThen(ConfigFile.Matching);
-			characterPipe.AndThen(characterCollector);
-			configPipe.AndThen(configCollector);
+			var characterPipe = MakePipe(out var characterCollector, out var configCollector);
 			characterPipe.Call(fileName);
 			var characterFile = characterCollector.Results.First();
 			var configFile = configCollector.Results.First();
@@ -35,6 +30,17 @@ namespace Data
 				characterFile.ResolveFormulasToValues(card, configFile);
 			}
 			return new CharacterData(localCards.Concat(partialCards).Select(CardViewModel.From));
+		}
+
+		public static PipeSource<string, CharacterFile> MakePipe(out Collector<CharacterFile> characterCollector, out Collector<ConfigFile> configCollector)
+		{
+			var characterPipe = new PipeSource<string, CharacterFile>(CharacterFile.From);
+			characterCollector = new Collector<CharacterFile>();
+			var configPipe = characterPipe.AndThen(ConfigFile.Matching);
+			characterPipe.AndThen(characterCollector);
+			configCollector = new Collector<ConfigFile>();
+			configPipe.AndThen(configCollector);
+			return characterPipe;
 		}
 
 		private void _LocateAndTranslateFormulas(CardData card)
