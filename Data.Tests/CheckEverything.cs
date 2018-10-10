@@ -13,7 +13,6 @@ namespace Data.Tests
 		[Test]
 		public void TestPipeline()
 		{
-
 			var pipeSource = DoEverything.MakePipe(out var characterCollector, out var configCollector);
 			Approvals.Verify( pipeSource);
 		}

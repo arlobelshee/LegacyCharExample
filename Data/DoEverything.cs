@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using Data.PipelineSynchronous;
 using JetBrains.Annotations;
 
@@ -14,7 +15,8 @@ namespace Data
 			characterPipe.Call(fileName);
 			var characterFile = characterCollector.Results.First();
 			var configFile = configCollector.Results.First();
-			var partialCards = characterFile.ParseCards();
+
+			List<CardData> partialCards = characterFile.ParseCards();
 			var localCards = configFile.ParseCards();
 			var compendiumService = CompendiumService.Authenticate(username, password);
 			var cardService = CardService.Authenticate(username, password);
@@ -37,9 +39,13 @@ namespace Data
 			var characterPipe = new PipeSource<string, CharacterFile>(CharacterFile.From);
 			characterCollector = new Collector<CharacterFile>();
 			var configPipe = characterPipe.AndThen(ConfigFile.Matching);
-			characterPipe.AndThen(characterCollector);
+			var partialCardsCollector = new Collector<List<CardData>>();
+			characterPipe.AndThen((cf) => cf.ParseCards()).AndThen(partialCardsCollector);
+
 			configCollector = new Collector<ConfigFile>();
+			characterPipe.AndThen(characterCollector);
 			configPipe.AndThen(configCollector);
+			
 			return characterPipe;
 		}
 
