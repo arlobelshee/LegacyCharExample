@@ -4,3 +4,69 @@
  |--> List`1 <>c.<MakePipe>b__1_0(CharacterFile cf)
  | |--> Collector
  |--> Collector
+
+
+String
+ fileName
+|
+|
+CharacterFile.From --> Collector
+| |
+| |
+| ParseCards --> Collector
+|
+|
+ConfigFile.Matching --> Collector
+|
+|
+ParseCards --> Collector
+
+String
+ fileName
+|
+|
+CharacterFile.From
+| |
+| |
+| ParseCards __> Goto A
+|
+|
+ConfigFile.Matching
+|
+|
+ParseCards __> Goto A
+
+A:
+|
+|
+Scatter (map)
+|
+|
+UpdateCard
+|
+|
+AddOnlineData
+|
+|
+Gather
+|
+|
+UpdateDisplay
+
+A (2)
+|
+|
+InitialDisplay
+
+
+String
+ fileName
+|
+|
+CharacterFile.From --> Collector
+|
+|
+>
+CharacterFile  (Collected)
+
+

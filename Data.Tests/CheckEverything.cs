@@ -14,7 +14,7 @@ namespace Data.Tests
 		public void TestPipeline()
 		{
 			var pipeSource = DoEverything.MakePipe(out var characterCollector, out var configCollector);
-			Approvals.Verify( pipeSource);
+			Approvals.Verify( pipeSource.ToNewString());
 		}
 
 	}

@@ -65,5 +65,10 @@ namespace Data.PipelineSynchronous
 		{
 			_impl(input);
 		}
+
+		public IApprovalWriter ToNewString()
+		{
+			throw new NotImplementedException();
+		}
 	}
 }
