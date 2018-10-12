@@ -1,4 +1,5 @@
-﻿using ApprovalTests;
+﻿using System.Collections.Generic;
+using ApprovalTests;
 using ApprovalTests.Reporters;
 using Data.PipelineSynchronous;
 using NUnit.Framework;
@@ -13,7 +14,7 @@ namespace Data.Tests
 		[Test]
 		public void TestPipeline()
 		{
-			var pipeSource = DoEverything.MakePipe(out var characterCollector, out var configCollector);
+			var pipeSource = DoEverything.MakePipe(out var characterCollector, out var configCollector, out var partialCardsCollector, out var configCardsCollector);
 			Approvals.Verify( pipeSource);
 		}
 

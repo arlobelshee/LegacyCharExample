@@ -1,5 +1,7 @@
 ﻿--> CharacterFile CharacterFile.From(String fileName)
  |--> ConfigFile ConfigFile.Matching(CharacterFile characterFile)
+ | |--> List`1 <>c.<MakePipe>b__1_1(ConfigFile cf)
+ | | |--> Collector
  | |--> Collector
  |--> List`1 <>c.<MakePipe>b__1_0(CharacterFile cf)
  | |--> Collector

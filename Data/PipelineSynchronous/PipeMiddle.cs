@@ -62,5 +62,12 @@ namespace Data.PipelineSynchronous
 			_nodeDisplay.WriteTo(output, myLevel);
 			DescribeChildren(output, myLevel);
 		}
+
+		public static Collector<TOut> Collect<TIn, TOut>(PipeMiddle<TIn, TOut> configPipe)
+		{
+			var configCollector = new Collector<TOut>();
+			configPipe.AndThen(configCollector);
+			return configCollector;
+		}
 	}
 }
