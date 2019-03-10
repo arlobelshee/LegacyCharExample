@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.IO;
 using Data.PipelineSynchronous;
 using FluentAssertions;
 using NUnit.Framework;
@@ -47,6 +49,40 @@ namespace Data.Tests.ExecutionPipelineWorks
 		{
 			generateOneResult(input + 1);
 			throw new ArgumentException("The right one.");
+		}
+
+		private class Monitor : IHandleResult<decimal>
+		{
+			public readonly List<object> OccurredEvents = new List<object>();
+
+			public Monitor(PipeThatCanBeFollowed<decimal, decimal> testSubject)
+			{
+				testSubject.AndThen(this);
+			}
+
+			public void HandleData(decimal data)
+			{
+				OccurredEvents.Add(Result(data));
+			}
+
+			public void HandleError(Exception error)
+			{
+				throw new NotImplementedException();
+			}
+
+			public void HandleDone()
+			{
+				OccurredEvents.Add(Done());
+			}
+
+			public void Describe(TextWriter output, int myLevel)
+			{
+				throw new NotImplementedException();
+			}
+
+			internal class OccurredEvent
+			{
+			}
 		}
 
 		[Test]
@@ -98,13 +134,12 @@ namespace Data.Tests.ExecutionPipelineWorks
 		public void ShouldAllowGeneratorFunctionsToPushSeveralArgumentsThenAutomaticallyFinishWhenTheyAreDone()
 		{
 			var testSubject = new PipeSource<decimal, decimal>(_AddOneTwoThree);
-			using (var monitor = testSubject.Monitor())
+			var monitor = new Monitor(testSubject);
 			{
 				testSubject.Call(4);
 				var expectation = new[] {Result(5), Result(6), Result(7), Done()};
 				monitor.OccurredEvents.Should()
-					.BeEquivalentTo(expectation, options => options.WithStrictOrdering()
-						.ExcludingMissingMembers());
+					.BeEquivalentTo(expectation, options => options.WithStrictOrdering());
 			}
 		}
 
@@ -121,13 +156,12 @@ namespace Data.Tests.ExecutionPipelineWorks
 		public void ShouldSendTheResultToAnyListeners()
 		{
 			var testSubject = new PipeSource<decimal, decimal>(_AddThree);
-			using (var monitor = testSubject.Monitor())
+			var monitor = new Monitor(testSubject);
 			{
 				testSubject.Call(4);
 				var expectation = new[] {Result(7), Done()};
 				monitor.OccurredEvents.Should()
-					.BeEquivalentTo(expectation, options => options.WithStrictOrdering()
-						.ExcludingMissingMembers());
+					.BeEquivalentTo(expectation, options => options.WithStrictOrdering());
 			}
 		}
 
@@ -136,13 +170,12 @@ namespace Data.Tests.ExecutionPipelineWorks
 		{
 			var head = new PipeSource<decimal, decimal>(_AddThree);
 			var middle = head.AndThen(_AddThree);
-			using (var monitor = middle.Monitor())
+			var monitor = new Monitor(middle);
 			{
 				head.Call(4);
 				var expectation = new[] {Result(10), Done()};
 				monitor.OccurredEvents.Should()
-					.BeEquivalentTo(expectation, options => options.WithStrictOrdering()
-						.ExcludingMissingMembers());
+					.BeEquivalentTo(expectation, options => options.WithStrictOrdering());
 			}
 		}
 	}

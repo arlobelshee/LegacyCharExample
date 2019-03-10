@@ -8,27 +8,31 @@ namespace Data.PipelineSynchronous
 {
 	public class PipeThatCanBeFollowed<TIn, TOut>
 	{
-		public delegate void Notify(PossibleResult<TOut> result);
-
 		private readonly List<IHandleResult<TOut>> _listeners = new List<IHandleResult<TOut>>();
 		protected Action<TIn> _impl;
 
 		protected void _Err(Exception error)
 		{
-			ResultGenerated?.Invoke(PossibleResult<TOut>.Of(error));
+			Notify(PossibleResult<TOut>.Of(error));
 		}
 
 		protected void _Notify(TOut result)
 		{
-			ResultGenerated?.Invoke(PossibleResult<TOut>.Of(result));
+			Notify(PossibleResult<TOut>.Of(result));
 		}
 
 		protected void _Finish()
 		{
-			ResultGenerated?.Invoke(PossibleResult<TOut>.Done());
+			Notify(PossibleResult<TOut>.Done());
 		}
 
-		public event Notify ResultGenerated;
+		void Notify(PossibleResult<TOut> result)
+		{
+			foreach (var listener in _listeners)
+			{
+				result.Handle(listener);
+			}
+		}
 
 		protected string _Format(MethodInfo handler)
 		{
@@ -67,7 +71,6 @@ namespace Data.PipelineSynchronous
 
 		public void AndThen(IHandleResult<TOut> downstream)
 		{
-			ResultGenerated += evt => evt.Handle(downstream);
 			_listeners.Add(downstream);
 		}
 
